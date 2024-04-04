@@ -1,6 +1,27 @@
 # パラメータ
 # date_ymd = 削除したいスナップショット名に含まれる日付（VM名_yyyymmdd）
-param($file,$date_ymd)
+param(
+  [string] $file,
+  [int] $date_ymd
+)
+
+# パラメータチェック
+if ( $file -eq $null ) {
+   Write-Host 'パラメータ$fileが空です'
+   exit
+} else {
+   if ( $path = Get-Item -Path $file ) {
+        # OK
+   } else {
+        Write-Host "$file ：パスが無効です"
+        exit
+   }
+}
+
+if ( $date_ymd -eq 0 ) {
+   Write-Host 'パラメータ$date_ymdが空です'
+   exit
+}
 
 # vcenter接続情報
 $ENV = Get-Content -Path ./env
@@ -19,6 +40,8 @@ for($i=0; $i -lt $vms.Count; $i++){
   if (Get-VM -Name $vm | Get-Snapshot) {
     Get-VM -Name $vm | Get-Snapshot -Name $snapshot_name | Remove-Snapshot -Confirm:$false
     Write-Host $snapshot_name "を削除しました"
+  } else {
+    Write-Host $snapshot_name "がありません"
   }
 }
 

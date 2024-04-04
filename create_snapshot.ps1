@@ -1,5 +1,20 @@
 # パラメータ
-param($file)
+param(
+ [string] $file
+)
+
+# パラメータチェック
+if ( $file -eq $null ) {
+   Write-Host 'パラメータ$fileが空です'
+   exit
+} else {
+   if ( $path = Get-Item -Path $file ) {
+        # OK
+   } else {
+        Write-Host "$file ：パスが無効です"
+        exit
+   }
+}
 
 # vcenter接続情報
 $ENV = Get-Content -Path ./env
